@@ -6,7 +6,7 @@ Context menu animated from the ellipsis symbol.
 
 ![Preview](preview.gif)
 
-*Recording causes background glitch.*
+*Recording causes background glitches.*
 
 ## Usage
 
