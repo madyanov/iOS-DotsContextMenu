@@ -6,6 +6,25 @@ Context menu animated from the ellipsis symbol.
 
 ![Preview](preview.gif)
 
+## Usage
+
+```swift
+let topButton = UIButton(type: .system)
+topButton.tintColor = .white
+topButton.setImage(#imageLiteral(resourceName: "calendar"), for: .normal)
+
+let middleButton = UIButton(type: .system)
+middleButton.tintColor = .white
+middleButton.setImage(#imageLiteral(resourceName: "bookmark"), for: .normal)
+
+let bottomButton = UIButton(type: .system)
+bottomButton.tintColor = .white
+bottomButton.setImage(#imageLiteral(resourceName: "plus"), for: .normal)
+
+let dotsMenu = DotsContextMenu(topButton: topButton, middleButton: middleButton, bottomButton: bottomButton)
+view.addSubview(dotsMenu)
+```
+
 ## Properties
 
 ```swift
