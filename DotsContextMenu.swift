@@ -292,9 +292,9 @@ extension DotsContextMenu {
     @objc private func didTap(_ recognizer: UITapGestureRecognizer) {
         let location = recognizer.location(in: self)
 
-        if state == .open || !bounds.contains(location) && !backgroundView.frame.contains(location) {
+        if state == .open {
             close()
-        } else if state == .closed {
+        } else if state == .closed && bounds.contains(location) {
             open()
         }
     }
