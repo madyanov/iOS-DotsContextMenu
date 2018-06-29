@@ -8,28 +8,32 @@
 import UIKit
 
 class DotsContextMenu: UIView {
+    var color = UIColor.black.withAlphaComponent(0.3) {
+        didSet { backgroundView.backgroundColor = color }
+    }
+
     var isReversed = false {
-        didSet { isNeedsLayout = oldValue != isReversed }
+        didSet { isNeedsLayout = oldValue != isReversed ? true : isNeedsLayout }
     }
 
     var width: CGFloat = 44 {
-        didSet { isNeedsLayout = oldValue != width }
+        didSet { isNeedsLayout = oldValue != width ? true : isNeedsLayout }
     }
 
     var dotRadius: CGFloat = 3 {
-        didSet { isNeedsLayout = oldValue != dotRadius }
+        didSet { isNeedsLayout = oldValue != dotRadius ? true : isNeedsLayout }
     }
 
     var closeAfterDelay: TimeInterval = 5
 
     private(set) var state = State.closed {
         didSet {
-            for button in [self.topButton, self.middleButton, self.bottomButton] {
-                if state == .open {
-                    button.isUserInteractionEnabled = true
-                } else if state == .closing {
-                    button.isUserInteractionEnabled = false
+            if state == .open && closeAfterDelay > 0 {
+                timer = Timer.scheduledTimer(withTimeInterval: closeAfterDelay, repeats: false) { [weak self] _ in
+                    self?.close()
                 }
+            } else if state == .closing {
+                timer?.invalidate()
             }
         }
     }
@@ -38,7 +42,7 @@ class DotsContextMenu: UIView {
 
     private lazy var backgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        view.backgroundColor = color
         view.alpha = 0
         return view
     }()
@@ -56,7 +60,6 @@ class DotsContextMenu: UIView {
     private var topButton: UIButton
     private var middleButton: UIButton
     private var bottomButton: UIButton
-
     private var isNeedsLayout = true
     private var timer: Timer?
 
@@ -89,7 +92,6 @@ class DotsContextMenu: UIView {
         addSubview(rightDotView)
 
         for button in [topButton, middleButton, bottomButton] {
-            button.isUserInteractionEnabled = false
             button.transform = DotsContextMenu.scaledTransform
             button.alpha = 0
             button.isHidden = true
@@ -109,10 +111,7 @@ class DotsContextMenu: UIView {
         }
 
         isNeedsLayout = false
-
-        for button in [topButton, middleButton, bottomButton] {
-            button.bounds.size = CGSize(width: width, height: width)
-        }
+        [topButton, middleButton, bottomButton].forEach { $0.bounds.size = CGSize(width: width, height: width) }
 
         backgroundView.frame = CGRect(x: 0, y: 0, width: width, height: width)
         backgroundView.layer.cornerRadius = width / 2
@@ -156,15 +155,15 @@ class DotsContextMenu: UIView {
 
         state = .opening
 
-        UIView.animate(withDuration: 0.2, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: [], animations: {
+        UIView.animate(withDuration: 0.2) {
             self.backgroundView.transform = .identity
             self.backgroundView.alpha = 1
 
             self.leftDotView.center = CGPoint(x: self.width / 2, y: self.width / 4 * 3)
             self.rightDotView.center = CGPoint(x: self.width / 2, y: self.width / 4)
-        }, completion: nil)
+        }
 
-        UIView.animate(withDuration: 0.3, delay: 0.2, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: .curveEaseIn, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.2, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: .curveEaseIn, animations: {
             if !self.isReversed {
                 self.backgroundView.frame.origin.y -= self.width
             } else {
@@ -178,7 +177,7 @@ class DotsContextMenu: UIView {
             self.rightDotView.center = self.topButtonCenter
         }, completion: nil)
 
-        UIView.animate(withDuration: 0.3, delay: 0.3, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.2, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
             self.leftDotView.transform = DotsContextMenu.scaledTransform
             self.leftDotView.alpha = 0
 
@@ -187,7 +186,7 @@ class DotsContextMenu: UIView {
             self.bottomButton.alpha = 1
         }, completion: nil)
 
-        UIView.animate(withDuration: 0.3, delay: 0.4, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.4, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
             self.middleDotView.transform = DotsContextMenu.scaledTransform
             self.middleDotView.alpha = 0
 
@@ -196,7 +195,7 @@ class DotsContextMenu: UIView {
             self.middleButton.alpha = 1
         }, completion: nil)
 
-        UIView.animate(withDuration: 0.3, delay: 0.5, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.6, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
             self.rightDotView.transform = DotsContextMenu.scaledTransform
             self.rightDotView.alpha = 0
 
@@ -205,12 +204,6 @@ class DotsContextMenu: UIView {
             self.topButton.alpha = 1
         }, completion: { _ in
             self.state = .open
-
-            if self.closeAfterDelay > 0 {
-                self.timer = Timer.scheduledTimer(withTimeInterval: self.closeAfterDelay, repeats: false) { [weak self] _ in
-                    self?.close()
-                }
-            }
         })
     }
 
@@ -220,7 +213,6 @@ class DotsContextMenu: UIView {
         }
 
         state = .closing
-        timer?.invalidate()
 
         UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
             self.rightDotView.transform = .identity
@@ -232,7 +224,7 @@ class DotsContextMenu: UIView {
             self.topButton.isHidden = true
         })
 
-        UIView.animate(withDuration: 0.2, delay: 0.1, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.2, options: [], animations: {
             self.middleDotView.transform = .identity
             self.middleDotView.alpha = 1
 
@@ -242,7 +234,7 @@ class DotsContextMenu: UIView {
             self.middleButton.isHidden = true
         })
 
-        UIView.animate(withDuration: 0.2, delay: 0.2, options: [], animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.4, options: [], animations: {
             self.leftDotView.transform = .identity
             self.leftDotView.alpha = 1
 
@@ -252,7 +244,7 @@ class DotsContextMenu: UIView {
             self.bottomButton.isHidden = true
         })
 
-        UIView.animate(withDuration: 0.3, delay: 0.4, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseIn, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0.6, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.2, options: .curveEaseIn, animations: {
             if !self.isReversed {
                 self.backgroundView.frame.origin.y += self.width
             } else {
