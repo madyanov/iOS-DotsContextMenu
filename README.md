@@ -51,7 +51,3 @@ func open()
 
 func close()
 ```
-
-## Todo
-
-- [ ] Add to Carthage & Cocoapods

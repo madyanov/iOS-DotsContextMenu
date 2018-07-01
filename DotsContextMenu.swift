@@ -7,6 +7,8 @@
 
 import UIKit
 
+private let kScaledTransform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+
 class DotsContextMenu: UIView {
     var color = UIColor.black.withAlphaComponent(0.3) {
         didSet { backgroundView.backgroundColor = color }
@@ -37,8 +39,6 @@ class DotsContextMenu: UIView {
             }
         }
     }
-
-    private static var scaledTransform = CGAffineTransform(scaleX: 0.01, y: 0.01)
 
     private lazy var backgroundView: UIView = {
         let view = UIView()
@@ -92,7 +92,7 @@ class DotsContextMenu: UIView {
         addSubview(rightDotView)
 
         for button in [topButton, middleButton, bottomButton] {
-            button.transform = DotsContextMenu.scaledTransform
+            button.transform = kScaledTransform
             button.alpha = 0
             button.isHidden = true
             addSubview(button)
@@ -115,7 +115,7 @@ class DotsContextMenu: UIView {
 
         backgroundView.frame = CGRect(x: 0, y: 0, width: width, height: width)
         backgroundView.layer.cornerRadius = width / 2
-        backgroundView.transform = DotsContextMenu.scaledTransform
+        backgroundView.transform = kScaledTransform
 
         topButton.center = topButtonCenter
         middleButton.center = middleButtonCenter
@@ -178,7 +178,7 @@ class DotsContextMenu: UIView {
         }, completion: nil)
 
         UIView.animate(withDuration: 0.2, delay: 0.2, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
-            self.leftDotView.transform = DotsContextMenu.scaledTransform
+            self.leftDotView.transform = kScaledTransform
             self.leftDotView.alpha = 0
 
             self.bottomButton.isHidden = false
@@ -187,7 +187,7 @@ class DotsContextMenu: UIView {
         }, completion: nil)
 
         UIView.animate(withDuration: 0.2, delay: 0.4, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
-            self.middleDotView.transform = DotsContextMenu.scaledTransform
+            self.middleDotView.transform = kScaledTransform
             self.middleDotView.alpha = 0
 
             self.middleButton.isHidden = false
@@ -196,7 +196,7 @@ class DotsContextMenu: UIView {
         }, completion: nil)
 
         UIView.animate(withDuration: 0.2, delay: 0.6, usingSpringWithDamping: 0.6, initialSpringVelocity: 0.2, options: [], animations: {
-            self.rightDotView.transform = DotsContextMenu.scaledTransform
+            self.rightDotView.transform = kScaledTransform
             self.rightDotView.alpha = 0
 
             self.topButton.isHidden = false
