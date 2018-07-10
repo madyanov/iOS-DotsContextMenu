@@ -9,7 +9,19 @@ import UIKit
 
 private let kScaledTransform = CGAffineTransform(scaleX: 0.01, y: 0.01)
 
-class DotsContextMenu: UIView {
+private protocol DotsContextMenuProtocol {
+    var color: UIColor { get set }
+    var isReversed: Bool { get set }
+    var width: CGFloat { get set }
+    var dotRadius: CGFloat { get set }
+    var closeAfterDelay: TimeInterval { get set }
+
+    init(topButton: UIButton, middleButton: UIButton, bottomButton: UIButton)
+    func open()
+    func close()
+}
+
+class DotsContextMenu: UIView, DotsContextMenuProtocol {
     var color = UIColor.black.withAlphaComponent(0.3) {
         didSet { backgroundView.backgroundColor = color }
     }

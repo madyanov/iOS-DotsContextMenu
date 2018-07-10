@@ -30,24 +30,28 @@ view.addSubview(dotsMenu)
 ## Properties
 
 ```swift
-// color of the dimmed background
-var color = UIColor.black.withAlphaComponent(0.3)
+// dimmed background color
+var color: UIColor { get set }
 
 // flips menu vertically
-var isReversed = false
+var isReversed: Bool { get set }
 
-var width: CGFloat = 44
+// width of the menu
+var width: CGFloat { get set }
 
-var dotRadius: CGFloat = 3
+// radius of the ellipsis dots
+var dotRadius: CGFloat { get set }
 
 // delay before menu will be automatically closed
-var closeAfterDelay: TimeInterval = 5
+var closeAfterDelay: TimeInterval { get set }
 ```
 
 ## Methods
 
 ```swift
+// manually open menu with animation
 func open()
 
+// manually close menu with animation
 func close()
 ```
